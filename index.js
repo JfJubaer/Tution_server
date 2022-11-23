@@ -49,63 +49,48 @@ async function run() {
     });
     app.post("/reviews", async (req, res) => {
       const review = req.body;
+      console.log(review);
       const result = await reviews.insertOne(review);
       res.send(result);
+
     });
     // My added reviews start here
-    app.get("/reviews", async (req, res) => {
-      const decoded = req.decoded;
-      if (decoded.email !== req.query.email) {
-        res.status(403).send({ message: "unauthorized access" });
-      }
-      let query = {};
-      if (req.query.email) {
+    app.get("/reviews/:email", async (req, res) => {
+
+      let
         query = {
-          email: req.query.email,
+          email: req.params.email,
         };
-      }
+
       const cursor = reviews.find(query);
       const myReviews = await cursor.toArray();
       res.send(myReviews);
     });
 
-    app.get("/reviews/:id", async (req, res) => {
-      const { id } = req.params;
+    app.get("/myreviews/:id", async (req, res) => {
+      const id = req.params.id;
       const chosenReview = await reviews.findOne({ _id: ObjectId(id) });
       res.send(chosenReview);
     });
 
     app.patch("/reviews/:id", async (req, res) => {
       const { id } = req.params;
+      const update = req.body.review;
+
       const result = await reviews.updateOne(
         { _id: ObjectId(id) },
-        { $set: req.body }
+        { $set: { review: update } }
       );
       res.send(result);
+
     });
     app.delete("/reviews/:id", async (req, res) => {
       const { id } = req.params;
       const result = await reviews.deleteOne({ _id: ObjectId(id) });
       res.send(result);
     });
-    // User added newService to the homepage
-    app.get("/services", async (req, res) => {
-      let query = {};
-      if (req.query.email) {
-        query = {
-          email: req.query.email,
-        };
-      }
-      const cursor = services.find(query);
-      const myNewAddedService = await cursor.toArray();
-      res.send(myNewAddedService);
-    });
-    app.post("/services", async (req, res) => {
-      const newService = req.body;
-      const result = await services.insertOne(newService);
 
-      res.send(result);
-    });
+
     // This section ends here
 
   } finally {
