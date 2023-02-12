@@ -14,9 +14,11 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
+// collections
 
 const services = client.db("tution-point").collection("subs");
 const reviews = client.db("tution-point").collection("reviews");
+const cart = client.db("tution-point").collection("items");
 
 
 async function run() {
@@ -99,6 +101,18 @@ async function run() {
       res.send(result);
     });
 
+    // carts section is here
+    app.get("/cart/:user", async (req, res) => {
+      const email = req.body.user;
+      const query = { email: email };
+      const result = await cart.find(query).toArray();
+      res.send(result);
+    })
+    app.post("/cart", async (req, res) => {
+      const item = req.body;
+      const result = await cart.insertOne(item);
+      res.send(result);
+    })
 
     // This section ends here
 
