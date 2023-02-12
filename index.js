@@ -47,6 +47,15 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    app.get("/reviews/:title", async (req, res) => {
+      query = {
+        title: req.params.title,
+      };
+
+      const cursor = reviews.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
     app.post("/reviews", async (req, res) => {
       const review = req.body;
       console.log(review);
