@@ -20,6 +20,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const services = client.db("tution-point").collection("subs");
 const reviews = client.db("tution-point").collection("reviews");
 const cart = client.db("tution-point").collection("items");
+const paymentCollection = client.db("tution-point").collection("payment");
 
 
 async function run() {
@@ -61,7 +62,7 @@ async function run() {
     });
     app.post("/reviews", async (req, res) => {
       const review = req.body;
-      console.log(review);
+      // console.log(review);
       const result = await reviews.insertOne(review);
       res.send(result);
 
@@ -133,6 +134,11 @@ async function run() {
         ]
       });
       res.send({ clientSecret: paymentIntent.client_secret })
+    })
+    app.post('/payment-done', async (req, res) => {
+      const payment = req.body;
+      const result = await paymentCollection.insertOne(payment);
+      res.send(result);
     })
 
     // This section ends here
