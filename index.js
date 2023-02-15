@@ -62,13 +62,12 @@ async function run() {
     });
     app.post("/reviews", async (req, res) => {
       const review = req.body;
-      // console.log(review);
       const result = await reviews.insertOne(review);
       res.send(result);
 
     });
     // My added reviews start here
-    app.get("/reviews/:email", async (req, res) => {
+    app.get("/myreviews/:email", async (req, res) => {
 
       let
         query = {
