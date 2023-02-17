@@ -103,10 +103,16 @@ async function run() {
     });
 
     // carts section is here
+    app.get("/cart", async (req, res) => {
+      const result = await cart.find({}).toArray();
+      res.send(result);
+    })
     app.get("/cart/:user", async (req, res) => {
-      const email = req.body.user;
-      const query = { email: email };
+      const { user } = req.params;
+      const query = { user: user };
+      // console.log(query);
       const result = await cart.find(query).toArray();
+      // console.log(result);
       res.send(result);
     })
     app.post("/cart", async (req, res) => {
