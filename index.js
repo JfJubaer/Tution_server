@@ -9,11 +9,9 @@ const stripe = require("stripe")('sk_test_51MbPCuFJhUO1VhGGxexvteISUJPR7MV7klUxh
 app.use(cors());
 app.use(express.json());
 
-
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.j88am2v.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
 
 // collections
 
@@ -22,10 +20,8 @@ const reviews = client.db("tution-point").collection("reviews");
 const cart = client.db("tution-point").collection("items");
 const paymentCollection = client.db("tution-point").collection("payment");
 
-
 async function run() {
   try {
-
     // Services are here
     app.get("/services", async (req, res) => {
       const query = {};
@@ -55,7 +51,6 @@ async function run() {
       query = {
         title: req.params.title,
       };
-
       const cursor = reviews.find(query);
       const result = await cursor.toArray();
       res.send(result);
@@ -64,44 +59,36 @@ async function run() {
       const review = req.body;
       const result = await reviews.insertOne(review);
       res.send(result);
-
     });
     // My added reviews start here
     app.get("/myreviews/:email", async (req, res) => {
-
       let
         query = {
           email: req.params.email,
         };
-
       const cursor = reviews.find(query);
       const myReviews = await cursor.toArray();
       res.send(myReviews);
     });
-
-    app.get("/myreviews/:id", async (req, res) => {
+    app.get("/myreview/:id", async (req, res) => {
       const id = req.params.id;
       const chosenReview = await reviews.findOne({ _id: ObjectId(id) });
       res.send(chosenReview);
     });
-
     app.patch("/reviews/:id", async (req, res) => {
       const { id } = req.params;
       const update = req.body.review;
-
       const result = await reviews.updateOne(
         { _id: ObjectId(id) },
         { $set: { review: update } }
       );
       res.send(result);
-
     });
     app.delete("/reviews/:id", async (req, res) => {
       const { id } = req.params;
       const result = await reviews.deleteOne({ _id: ObjectId(id) });
       res.send(result);
     });
-
     // carts section is here
     app.get("/cart", async (req, res) => {
       const result = await cart.find({}).toArray();
@@ -125,7 +112,6 @@ async function run() {
       const result = await cart.deleteOne({ _id: ObjectId(id) });
       res.send(result);
     })
-
     // payment section
     app.post('/payment', async (req, res) => {
       const total = req.body.total;
@@ -145,18 +131,14 @@ async function run() {
       const result = await paymentCollection.insertOne(payment);
       res.send(result);
     })
-
     // This section ends here
-
   } finally {
   }
 }
 run();
-
 app.get('/', (req, res) => {
   res.send('Server is running at full speed')
 })
-
 app.listen(port, () => {
   console.log('Server is running at ', port);
 })
